@@ -4,13 +4,15 @@
  * @brief Header file for the notes.
  *
  * This file contains the notes definitions for frequency
- *
+ * along with the arrays of songs and durations
  * @author Daniel Garcia
  */
 
 #ifndef NOTES_H
 #define NOTES_H
 #define REST 0.0f
+#define WHOLE_NOTE_DURATION 1600
+#include <stdint.h>
 
 // Notes from C2 to B6 (extern declarations as floats)
 
@@ -20,4 +22,15 @@ extern const float C4, Cs4, D4, Eb4, E4, F4, Fs4, G4, Gs4, A4, Bb4, B4;
 extern const float C5, Cs5, D5, Eb5, E5, F5, Fs5, G5, Gs5, A5, Bb5, B5;
 extern const float C6, Cs6, D6, Eb6, E6, F6, Fs6, G6, Gs6, A6, Bb6, B6;
 
+// Tetris Theme
+extern const float tetris_notes[];
+extern const int tetris_dur[];
+extern const int length_tetris;
+
+// Harry Potter Theme
+extern const float harryp_notes[];
+extern const int harryp_dur[];
+extern const int length_harryp;
+
 #endif // NOTES_H
+

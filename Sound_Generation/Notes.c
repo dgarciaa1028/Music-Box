@@ -8,7 +8,7 @@
  * @author Daniel Garcia
  */
  
-#include "notes.h"
+#include "Notes.h"
 
 // Using float for space
 const float C2  = 65.41f;
@@ -75,3 +75,162 @@ const float Gs6 = 1661.0f;
 const float A6  = 1760.0f;
 const float Bb6 = 1865.0f;
 const float B6  = 1976.0f;
+
+const float C7  = 2093.0f;
+const float Cs7 = 2217.5f;
+const float D7  = 2349.3f;
+const float Eb7 = 2489.0f;
+const float E7  = 2637.0f;
+const float F7  = 2793.8f;
+const float Fs7 = 2960.0f;
+const float G7  = 3136.0f;
+const float Gs7 = 3322.4f;
+const float A7  = 3520.0f;
+const float Bb7 = 3729.3f;
+const float B7  = 3951.1f;
+
+
+// Tetris Theme
+const float tetris_notes[] = {
+    E5, B4, C5, D5, C5, B4,
+    A4, A4, C5, E5, D5, C5,
+    B4, C5, D5, E5,
+    C5, A4, A4, A4, B4, C5,
+
+    D5, F5, A5, G5, F5,
+    E5, C5, E5, D5, C5,
+    B4, B4, C5, D5, E5,
+    C5, A4, A4, REST,
+
+    E5, B4, C5, D5, C5, B4,
+    A4, A4, C5, E5, D5, C5,
+    B4, C5, D5, E5,
+    C5, A4, A4, A4, B4, C5,
+
+    D5, F5, A5, G5, F5,
+    E5, C5, E5, D5, C5,
+    B4, B4, C5, D5, E5,
+    C5, A4, A4, REST,
+
+    E5, C5,
+    D5, B4,
+    C5, A4,
+    Gs4, B4, REST,
+    E5, C5,
+    D5, B4,
+    C5, E5, A5,
+    Gs5
+};
+
+// 1 = whole note, 2 = half note, 4 = quarter notes, 8 = eighth notes.
+const int tetris_dur[] = {
+    4, 8, 8, 4, 8, 8,
+    4, 8, 8, 4, 8, 8,
+    4, 8, 4, 4,
+    4, 4, 8, 4, 8, 8,
+
+    4, 8, 4, 8, 8,
+    4, 8, 4, 8, 8,
+    4, 8, 8, 4, 4,
+    4, 4, 4, 4,
+
+    4, 8, 8, 4, 8, 8,
+    4, 8, 8, 4, 8, 8,
+    4, 8, 4, 4,
+    4, 4, 8, 4, 8, 8,
+
+    4, 8, 4, 8, 8,
+    4, 8, 4, 8, 8,
+    4, 8, 8, 4, 4,
+    4, 4, 4, 4,
+
+    2, 2,
+    2, 2,
+    2, 2,
+    2, 4, 8,
+    2, 2,
+    2, 2,
+    4, 4, 2,
+    2
+};
+
+const int length_tetris = sizeof(tetris_notes) / sizeof(tetris_notes[0]);
+
+// Harry Potter Theme
+const float harryp_notes[] = {
+    REST, D4,
+    G4, Bb4, A4,
+    G4, D5,
+    C5,
+    A4,
+    G4, Bb4, A4,
+    F4, Gs4,
+    D4,
+    D4,
+
+    G4, Bb4, A4,
+    G4, D5,
+    F5, E5,
+    Eb5, B4,
+    Eb5, D5, Cs5,
+    Cs4, B4,
+    G4,
+    Bb4,
+
+    D5, Bb4,
+    D5, Bb4,
+    Eb5, D5,
+    Cs5, A4,
+    Bb4, D5, Cs5,
+    Cs4, D4,
+    D5,
+    REST, Bb4,
+
+    D5, Bb4,
+    D5, Bb4,
+    F5, E5,
+    Eb5, B4,
+    Eb5, D5, Cs5,
+    Cs4, Bb4,
+    G4
+};
+
+const int harryp_dur[] = {
+    2, 4,
+    4, 8, 4,
+    2, 4,
+    2,
+    2,
+    4, 8, 4,
+    2, 4,
+    1,
+    4,
+
+    4, 8, 4,
+    2, 4,
+    2, 4,
+    2, 4,
+    4, 8, 4,
+    2, 4,
+    1,
+    4,
+
+    2, 4,
+    2, 4,
+    2, 4,
+    2, 4,
+    4, 8, 4,
+    2, 4,
+    1,
+    4, 4,
+
+    2, 4,
+    2, 4,
+    2, 4,
+    2, 4,
+    4, 8, 4,
+    2, 4,
+    1
+};
+
+const int length_harryp = sizeof(harryp_notes) / sizeof(harryp_notes[0]);

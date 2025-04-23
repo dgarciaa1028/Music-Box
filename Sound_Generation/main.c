@@ -13,67 +13,49 @@
  *
  * @author Daniel Garcia
  */
- 
+
 #include "TM4C123GH6PM.h"
 #include "SysTick_Delay.h"
 #include "GPIO.h"
 #include "Buzzer.h"
 #include "Notes.h"
 
+#define WHOLE_NOTE_DURATION 1600  // 1 = whole note (1600ms), 4 = quarter, 8 = eighth, etc.
+#define REST 0.0f
+
 int main(void)
 {
-	// Initialize the SysTick Timer used to provide a blocking delay function
+	// Initialize hardware
 	SysTick_Delay_Init();
-	
-	// Initialize the Tiva LaunchPad buttons (SW0 and SW1)
 	LaunchPad_Buttons_Init();
-	
-	// Initialize the DMT-1206 Magnetix Buzzer (Port C)
 	Buzzer_Init();
-	
-	// Make arrays containing notes and durations of notes in a song
-	float top_notes[] = {
-    C4, C4, G4, G4, A4, A4, G4,  // "Twinkle twinkle little star"
-    F4, F4, E4, E4, D4, D4, C4,  // "How I wonder what you are"
-    G4, G4, F4, F4, E4, E4, D4,  // "Up above the world so high"
-    G4, G4, F4, F4, E4, E4, D4,  // "Like a diamond in the sky"
-    C4, C4, G4, G4, A4, A4, G4,  // Repeats first line
-    F4, F4, E4, E4, D4, D4, C4   // Repeats second line
-	};
 
-	int length = 42;
-	const int twinkle_durations[] = {
-    400, 400, 400, 400, 400, 400, 800,
-    400, 400, 400, 400, 400, 400, 800,
-    400, 400, 400, 400, 400, 400, 800,
-    400, 400, 400, 400, 400, 400, 800,
-    400, 400, 400, 400, 400, 400, 800,
-    400, 400, 400, 400, 400, 400, 800
-	};
-	
-	while(1)
+	while (1)
 	{
-		// We will want to replace this with the encoder module to select a song
-		uint8_t launchpad_button_status = Get_LaunchPad_Button_Status();
-		
-		if (launchpad_button_status & 0x01)
+		uint8_t buttons = Get_LaunchPad_Button_Status();
+
+		if (buttons & 0x01)  // SW2 (PF0) pressed, start song
 		{
-			for (int i = 0; i < length; i++)
+			for (int i = 0; i < length_harryp; i++)
 			{
-				Play_Note(BUZZER1, top_notes[i], twinkle_durations[i]);
-			} 
+				buttons = Get_LaunchPad_Button_Status();
+
+				// If SW1 (PF4) is pressed, stop song
+				if (buttons & 0x10)
+				{
+					Buzzer_Output(BUZZER_OFF);  // Turn buzzer off
+					break;
+				}
+
+				int duration_ms = WHOLE_NOTE_DURATION / harryp_dur[i];
+				Play_Note(harryp_notes[i], duration_ms);
+
+				// Small pause to separate notes slightly
+				SysTick_Delay1ms(duration_ms * 0.03);
+			}
 		}
-		else if (launchpad_button_status & 0x10)
-		{
-			for (int i = 0; i < length; i++)
-			{
-				Play_Note(BUZZER1, top_notes[i], twinkle_durations[i]);
-			} 
-		}
-		else
-		{
-			Buzzer_Output(BUZZER1, BUZZER_OFF);
-			Buzzer_Output(BUZZER2, BUZZER_OFF);
-		}
+
+		// Ensure buzzer is off if idle or interrupted
+		Buzzer_Output(BUZZER_OFF);
 	}
 }

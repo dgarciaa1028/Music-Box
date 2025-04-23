@@ -17,9 +17,6 @@
 #include "SysTick_Delay.h"
 #include "GPIO.h"
 
-#define BUZZER1 0x10 // PC4
-#define BUZZER2 0x20 // PC5
-
 // Constant definitions for the buzzer
 extern const uint8_t BUZZER_OFF;
 extern const uint8_t BUZZER_ON;
@@ -52,7 +49,7 @@ void Buzzer_Init(void);
  *
  * @return None
  */
-void Buzzer_Output(uint8_t buzzer_mask, uint8_t value);
+void Buzzer_Output(uint8_t value);
 
 /**
  * @brief Plays a note with the DMT-1206 Magnetic Buzzer.
@@ -67,4 +64,4 @@ void Buzzer_Output(uint8_t buzzer_mask, uint8_t value);
  *
  * @return None
  */
-void Play_Note(uint8_t buzzer_mask, float note, int duration);
+void Play_Note(float note, int duration);
