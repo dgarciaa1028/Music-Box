@@ -3,7 +3,10 @@
  *
  * @brief Source file for the notes.
  *
- * This file contains the notes definitions for frequency
+ * This file contains the notes definitions for frequency along with the note and duration arrays
+ *
+ * @NOTE Tetris and Harry Potter notes and duration array is credited to hibit-dev on GitHub
+ * Link to their Repository: https://github.com/hibit-dev/buzzer/tree/master/src
  *
  * @author Daniel Garcia
  */
