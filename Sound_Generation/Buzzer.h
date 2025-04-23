@@ -17,20 +17,13 @@
 #include "SysTick_Delay.h"
 #include "GPIO.h"
 
+#define BUZZER1 0x10 // PC4
+#define BUZZER2 0x20 // PC5
+
 // Constant definitions for the buzzer
 extern const uint8_t BUZZER_OFF;
 extern const uint8_t BUZZER_ON;
 
-// Constant definitions for musical notes
-extern const double C4_NOTE;
-extern const double D4_NOTE;
-extern const double E4_NOTE;
-extern const double F4_NOTE;
-extern const double G4_NOTE;
-extern const double A4_NOTE;
-extern const double B4_NOTE;
-
-extern const double C5_NOTE;
 
 /**
  * @brief Initializes the DMT-1206 Magnetic Buzzer on the EduBase board.
@@ -59,7 +52,7 @@ void Buzzer_Init(void);
  *
  * @return None
  */
-void Buzzer_Output(uint8_t buzzer_value);
+void Buzzer_Output(uint8_t buzzer_mask, uint8_t value);
 
 /**
  * @brief Plays a note with the DMT-1206 Magnetic Buzzer.
@@ -74,6 +67,4 @@ void Buzzer_Output(uint8_t buzzer_value);
  *
  * @return None
  */
-void Play_Note(double note, unsigned int duration);
-
-void Play_Tune(double note, unsigned int duration);
+void Play_Note(uint8_t buzzer_mask, float note, int duration);

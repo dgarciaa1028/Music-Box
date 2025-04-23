@@ -409,6 +409,11 @@
               <FileType>1</FileType>
               <FilePath>.\Buzzer.c</FilePath>
             </File>
+            <File>
+              <FileName>Notes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Notes.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -428,6 +433,11 @@
               <FileName>Buzzer.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Buzzer.h</FilePath>
+            </File>
+            <File>
+              <FileName>Notes.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Notes.h</FilePath>
             </File>
           </Files>
         </Group>

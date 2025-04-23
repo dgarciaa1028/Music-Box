@@ -10,7 +10,7 @@
  * To verify the pinout of the user LED, refer to the Tiva C Series TM4C123G LaunchPad User's Guide
  * Link: https://www.ti.com/lit/pdf/spmu296
  *
- * @author Aaron Nanas
+ * @author Daniel Garcua Aguilar
  */
  
 #include "Buzzer.h"
@@ -19,70 +19,63 @@
 const uint8_t BUZZER_OFF 		= 0x00;
 const uint8_t BUZZER_ON			= 0x10;
 
-// Constant definitions for musical notes
-const double C4_NOTE = 261.6;
-const double D4_NOTE = 293.7;
-const double E4_NOTE = 329.6;
-const double F4_NOTE = 349.2;
-const double G4_NOTE = 392.0;
-const double A4_NOTE = 440.0;
-const double B4_NOTE = 493.0;
-
-const double C5_NOTE = 523.2;
 
 void Buzzer_Init(void)
 {
 	// Enable the clock to Port C
 	SYSCTL->RCGCGPIO |= 0x04;
 	
-	// Set PC4 as an output GPIO pin
-	GPIOC->DIR |= 0x10;
+	// Set PC4 and PC5 as an output GPIO pin
+	GPIOC->DIR |= 0x30;
 	
-	// Configure PC4 to function as a GPIO pin
-	GPIOC->AFSEL &= ~0x10;
+	// Configure PC4 and PC4 to function as a GPIO pin
+	GPIOC->AFSEL &= ~0x30;
 	
-	// Enable digital functionaloty for PC4
-	GPIOC->DEN |= 0x10;
+	// Enable digital functionaloty for PC4 and PC5
+	GPIOC->DEN |= 0x30;
 }
  
-void Buzzer_Output(uint8_t buzzer_value)
+void Buzzer_Output(uint8_t buzzer_mask, uint8_t value)
 {
 	// Set the output of the buzzer
-	GPIOC->DATA = (GPIOC->DATA & 0xEF) | buzzer_value;
+	if (value)
+		GPIOC->DATA |= buzzer_mask; // turn on
+	else
+		GPIOC->DATA &= ~buzzer_mask; // turn off
 }
 
-void Play_Note(double note, unsigned int duration)
+void Play_Note(uint8_t buzzer_mask, float note, int duration)
 {
-	// Calculate the period of the note in microseconds
-	int period_us = (int)(((double)1/note) * ((double)1000000));
-	
-	// Calculate the half period of the note in microseconds
-	int half_period_us = period_us / 2;
-	
-	// Generate a square wave for the specified duration
-	for (unsigned int i = 0; i < duration; i++)
+	if (note <= 0.0f)
 	{
-		Buzzer_Output(BUZZER_ON);
-		SysTick_Delay1us(half_period_us);
-		Buzzer_Output(BUZZER_OFF);
-		SysTick_Delay1us(half_period_us);
+		// Rest note — just delay for the full duration with no sound
+    SysTick_Delay1ms(duration);
+    return;
 	}
-}
 
-void Play_Tune(double note, unsigned int duration)
-{
 	// Calculate the period of the note in microseconds
 	int period_us = (int)(((double)1/note) * ((double)1000000));
 	
 	// Calculate the half period of the note in microseconds
 	int half_period_us = period_us / 2;
 	
-	// Generate a square wave for the specified duration
-	for (unsigned int i = 0; i < duration; i++)
+	// Without converting the duration into cycles, the higher frequencies would play for a much
+	// shorter time when compared to playing lower frequencies due to the calculations above.
+	// Due to this, playing based off of cycles instead means that every 'note' will play for the
+	// same amount of time regardless of frequency.
+	
+	// Total duration in us
+	int total_us = duration * 1000;
+	
+	// Number of cycles needed to match total duration
+	int cycles = total_us / period_us;
+	
+	// Generate a square wave for the specified cycles
+	for (unsigned int i = 0; i < cycles; i++)
 	{
-		Buzzer_Output(BUZZER_ON);
+		Buzzer_Output(buzzer_mask, 1);
 		SysTick_Delay1us(half_period_us);
-		Buzzer_Output(BUZZER_OFF);
+		Buzzer_Output(buzzer_mask, 0);
 		SysTick_Delay1us(half_period_us);
 	}
 }
