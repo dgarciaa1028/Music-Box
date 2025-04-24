@@ -36,7 +36,7 @@ int main(void)
 	uint8_t last_state = PMOD_ENC_Get_State();
   int current_song_index = 0;
   int last_song_index = -1;
-  const int num_songs = 3;
+  const int num_songs = 4; // Change this when you add another song
 
 	while (1)
 	{
@@ -55,9 +55,10 @@ int main(void)
 
           switch (current_song_index)
           {
-            case 0: Play_Tetris(); break; // starts immediately playing tetris when reset
+            case 0: Play_Tetris(); break; // starts immediately playing tetris when resetn 
             case 1: Play_HarryPotter(); break;
             case 2: Play_Pirates(); break;
+						case 3: Play_PinkPanther(); break; // to add another song, keep same format
           }
         }
 

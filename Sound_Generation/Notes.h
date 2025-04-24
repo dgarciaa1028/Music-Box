@@ -42,6 +42,7 @@ extern const int length_pirates;
 void Play_Tetris(void);
 void Play_HarryPotter(void);
 void Play_Pirates(void);
+void Play_PinkPanther(void);
 
 #endif // NOTES_H
 

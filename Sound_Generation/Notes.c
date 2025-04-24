@@ -263,6 +263,13 @@ void Play_HarryPotter(void)
 {
     for (int i = 0; i < length_harryp; i++)
     {
+				// Check if the button is being pressed
+        if (PMOD_ENC_Button_Read(PMOD_ENC_Get_State()) == PMOD_ENC_BUTTON_MASK)
+        {
+            Buzzer_Output(BUZZER_OFF);  // Stop buzzer
+            break;
+        }
+				
         int duration_ms = WHOLE_NOTE_DURATION / harryp_dur[i];
         Play_Note(harryp_notes[i], duration_ms);
         SysTick_Delay1ms(duration_ms * 0.03);
@@ -383,8 +390,78 @@ void Play_Pirates(void)
 {
     for (int i = 0; i < length_pirates; i++)
     {				
+				// Check if the button is being pressed
+        if (PMOD_ENC_Button_Read(PMOD_ENC_Get_State()) == PMOD_ENC_BUTTON_MASK)
+        {
+            Buzzer_Output(BUZZER_OFF);  // Stop buzzer
+            break;
+        }
+				
         int duration_ms = WHOLE_NOTE_DURATION / pirates_dur[i];
         Play_Note(pirates_notes[i], duration_ms);
         SysTick_Delay1ms(duration_ms * 0.03);
     }
 }
+
+
+int panther_notes[] = {
+  REST, REST, REST, Eb4, 
+  E4, REST, Fs4, G4, REST, Eb4,
+  E4, Fs4, G4, C5, B4, E4, G4, B4,   
+  Bb4, A4, G4, E4, D4, 
+  E4, REST, REST, Eb4,
+
+  E4, REST, Fs4, G4, REST,Eb4,
+  E4, Fs4, G4, C5, B4, G4, B4, E5,
+  Eb5,   
+  D5, REST, REST, Eb4, 
+  E4, REST, Fs4, G4, REST, Eb4,
+  E4, Fs4, G4, C5, B4, E4, G4, B4,   
+
+  Bb4, A4, G4, E4, D4, 
+  E4, REST,
+  REST, E5, D5, B4, A4, G4, E4,
+  Bb4, A4, Bb4, A4, Bb4, A4, Bb4, A4,   
+  G4, E4, D4, E4, E4, E4
+};
+
+int panther_dur[] = {
+  2, 4, 8, 8, 
+  4, 8, 8, 4, 8, 8,
+  8, 8, 8, 8, 8, 8, 8, 8,   
+  2, 16, 16, 16, 16, 
+  2, 4, 8, 4,
+
+  4, 8, 8, 4, 8, 8,
+  8, 8, 8, 8, 8, 8, 8, 8,
+  1,   
+  2, 4, 8, 8, 
+  4, 8, 8, 4, 8, 8,
+  8, 8, 8, 8, 8, 8, 8, 8,   
+
+  2, 16, 16, 16, 16, 
+  4, 4,
+  4, 8, 8, 8, 8, 8, 8,
+  16, 8, 16, 8, 16, 8, 16, 8,   
+  16, 16, 16, 16, 16, 2
+};
+
+const int length_panther = sizeof(panther_notes) / sizeof(panther_notes[0]);
+
+void Play_PinkPanther(void)
+{
+    for (int i = 0; i < length_panther; i++)
+    {				
+				// Check if the button is being pressed
+        if (PMOD_ENC_Button_Read(PMOD_ENC_Get_State()) == PMOD_ENC_BUTTON_MASK)
+        {
+            Buzzer_Output(BUZZER_OFF);  // Stop buzzer
+            break;
+        }
+				
+        int duration_ms = WHOLE_NOTE_DURATION / panther_dur[i];
+        Play_Note(panther_notes[i], duration_ms);
+        SysTick_Delay1ms(duration_ms * 0.03);
+    }
+}
+
