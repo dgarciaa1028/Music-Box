@@ -19,43 +19,49 @@
 #include "GPIO.h"
 #include "Buzzer.h"
 #include "Notes.h"
+#include "PMOD_ENC.h"
 
-#define WHOLE_NOTE_DURATION 1600  // 1 = whole note (1600ms), 4 = quarter, 8 = eighth, etc.
-#define REST 0.0f
 
 int main(void)
 {
 	// Initialize hardware
 	SysTick_Delay_Init();
 	LaunchPad_Buttons_Init();
-	Buzzer_Init();
+	Buzzer_Init(); // PC4
+	PMOD_ENC_Init();
+	/*
+		A = PD0, B = PD1, BTN = PD2, SWT = PD3, 5th pin = GND, 6th pin = Vcc
+	*/
+	
+	uint8_t last_state = PMOD_ENC_Get_State();
+  int current_song_index = 0;
+  int last_song_index = -1;
+  const int num_songs = 3;
 
 	while (1)
 	{
-		uint8_t buttons = Get_LaunchPad_Button_Status();
+		uint8_t state = PMOD_ENC_Get_State();
+    int direction = PMOD_ENC_Get_Rotation(state, last_state);
+    last_state = state;
 
-		if (buttons & 0x01)  // SW2 (PF0) pressed, start song
-		{
-			for (int i = 0; i < length_harryp; i++)
-			{
-				buttons = Get_LaunchPad_Button_Status();
+    if (direction == 1)
+			current_song_index = (current_song_index + 1) % num_songs;
+    else if (direction == -1)
+       current_song_index = (current_song_index - 1 + num_songs) % num_songs;
 
-				// If SW1 (PF4) is pressed, stop song
-				if (buttons & 0x10)
-				{
-					Buzzer_Output(BUZZER_OFF);  // Turn buzzer off
-					break;
-				}
+     if (current_song_index != last_song_index)
+			 {
+					last_song_index = current_song_index;
 
-				int duration_ms = WHOLE_NOTE_DURATION / harryp_dur[i];
-				Play_Note(harryp_notes[i], duration_ms);
+          switch (current_song_index)
+          {
+            case 0: Play_Tetris(); break; // starts immediately playing tetris when reset
+            case 1: Play_HarryPotter(); break;
+            case 2: Play_Pirates(); break;
+          }
+        }
 
-				// Small pause to separate notes slightly
-				SysTick_Delay1ms(duration_ms * 0.03);
-			}
-		}
-
-		// Ensure buzzer is off if idle or interrupted
-		Buzzer_Output(BUZZER_OFF);
+      SysTick_Delay1ms(100);  // debounce
+		
 	}
 }

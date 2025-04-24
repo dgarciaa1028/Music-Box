@@ -414,6 +414,11 @@
               <FileType>1</FileType>
               <FilePath>.\Notes.c</FilePath>
             </File>
+            <File>
+              <FileName>PMOD_ENC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\PMOD_ENC.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -438,6 +443,11 @@
               <FileName>Notes.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Notes.h</FilePath>
+            </File>
+            <File>
+              <FileName>PMOD_ENC.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\PMOD_ENC.h</FilePath>
             </File>
           </Files>
         </Group>

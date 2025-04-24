@@ -35,5 +35,13 @@ extern const float harryp_notes[];
 extern const int harryp_dur[];
 extern const int length_harryp;
 
+extern const float pirates_notes[];
+extern const int pirates_dur[];
+extern const int length_pirates;
+
+void Play_Tetris(void);
+void Play_HarryPotter(void);
+void Play_Pirates(void);
+
 #endif // NOTES_H
 

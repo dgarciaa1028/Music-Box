@@ -12,6 +12,9 @@
  */
  
 #include "Notes.h"
+#include "SysTick_Delay.h"
+#include "Buzzer.h"
+#include "PMOD_ENC.h"
 
 // Using float for space
 const float C2  = 65.41f;
@@ -159,6 +162,24 @@ const int tetris_dur[] = {
 
 const int length_tetris = sizeof(tetris_notes) / sizeof(tetris_notes[0]);
 
+void Play_Tetris(void)
+{
+    for (int i = 0; i < length_tetris; i++)
+    {
+				// Check if the button is being pressed
+        if (PMOD_ENC_Button_Read(PMOD_ENC_Get_State()) == PMOD_ENC_BUTTON_MASK)
+        {
+            Buzzer_Output(BUZZER_OFF);  // Stop buzzer
+            break;
+        }
+				
+        int duration_ms = WHOLE_NOTE_DURATION / tetris_dur[i];
+        Play_Note(tetris_notes[i], duration_ms);
+        SysTick_Delay1ms(duration_ms * 0.03);
+    }
+}
+
+
 // Harry Potter Theme
 const float harryp_notes[] = {
     REST, D4,
@@ -237,3 +258,133 @@ const int harryp_dur[] = {
 };
 
 const int length_harryp = sizeof(harryp_notes) / sizeof(harryp_notes[0]);
+
+void Play_HarryPotter(void)
+{
+    for (int i = 0; i < length_harryp; i++)
+    {
+        int duration_ms = WHOLE_NOTE_DURATION / harryp_dur[i];
+        Play_Note(harryp_notes[i], duration_ms);
+        SysTick_Delay1ms(duration_ms * 0.03);
+    }
+}
+
+
+const float pirates_notes[] = {
+  E4, G4, A4, A4, REST,
+  A4, B4, C5, C5, REST,
+  C5, D5, B4, B4, REST,
+  A4, G4, A4, REST,
+
+  E4, G4, A4, A4, REST,
+  A4, B4, C5, C5, REST,
+  C5, D5, B4, B4, REST,
+  A4, G4, A4, REST,
+
+  E4, G4, A4, A4, REST,
+  A4, C5, D5, D5, REST,
+  D5, E5, F5, F5, REST,
+  E5, D5, E5, A4, REST,
+
+  A4, B4, C5, C5, REST,
+  D5, E5, A4, REST,
+  A4, C5, B4, B4, REST,
+  C5, A4, B4, REST,
+
+  A4, A4,
+  // Repeat of first part
+  A4, B4, C5, C5, REST,
+  C5, D5, B4, B4, REST,
+  A4, G4, A4, REST,
+
+  E4, G4, A4, A4, REST,
+  A4, B4, C5, C5, REST,
+  C5, D5, B4, B4, REST,
+  A4, G4, A4, REST,
+
+  E4, G4, A4, A4, REST,
+  A4, C5, D5, D5, REST,
+  D5, E5, F5, F5, REST,
+  E5, D5, E5, A4, REST,
+
+  A4, B4, C5, C5, REST,
+  D5, E5, A4, REST,
+  A4, C5, B4, B4, REST,
+  C5, A4, B4, REST,
+
+  E5, REST, REST, F5, REST, REST,
+  E5, E5, REST, G5, REST, E5, D5, REST, REST,
+  D5, REST, REST, C5, REST, REST,
+  B4, C5, REST, B4, REST, A4,
+
+  E5, REST, REST, F5, REST, REST,
+  E5, E5, REST, G5, REST, E5, D5, REST, REST,
+  D5, REST, REST, C5, REST, REST,
+  B4, C5, REST, B4, REST, A4
+};
+
+
+const int pirates_dur[] = {
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8,
+
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8,
+
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 8, 4, 8,
+
+  8, 8, 4, 8, 8,
+  4, 8, 4, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 4,
+
+  4, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8,
+
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8,
+
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 8, 4, 8,
+
+  8, 8, 4, 8, 8,
+  4, 8, 4, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 4,
+
+  4, 8, 4, 4, 8, 4,
+  8, 8, 8, 8, 8, 8, 8, 8, 4,
+  4, 8, 4, 4, 8, 4,
+  8, 8, 8, 8, 8, 2,
+
+  4, 8, 4, 4, 8, 4,
+  8, 8, 8, 8, 8, 8, 8, 8, 4,
+  4, 8, 4, 4, 8, 4,
+  8, 8, 8, 8, 8, 2
+};
+
+
+const int length_pirates = sizeof(pirates_notes) / sizeof(pirates_notes[0]);
+
+void Play_Pirates(void)
+{
+    for (int i = 0; i < length_pirates; i++)
+    {				
+        int duration_ms = WHOLE_NOTE_DURATION / pirates_dur[i];
+        Play_Note(pirates_notes[i], duration_ms);
+        SysTick_Delay1ms(duration_ms * 0.03);
+    }
+}
