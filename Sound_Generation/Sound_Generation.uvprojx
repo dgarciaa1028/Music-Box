@@ -419,6 +419,21 @@
               <FileType>1</FileType>
               <FilePath>.\PMOD_ENC.c</FilePath>
             </File>
+            <File>
+              <FileName>PWM_Clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\PWM_Clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>Timer_0A_Interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Timer_0A_Interrupt.c</FilePath>
+            </File>
+            <File>
+              <FileName>PWM0_0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\PWM0_0.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -448,6 +463,21 @@
               <FileName>PMOD_ENC.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\PMOD_ENC.h</FilePath>
+            </File>
+            <File>
+              <FileName>PWM_Clock.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\PWM_Clock.h</FilePath>
+            </File>
+            <File>
+              <FileName>Timer_0A_Interrupt.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Timer_0A_Interrupt.h</FilePath>
+            </File>
+            <File>
+              <FileName>PWM0_0.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\PWM0_0.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -20,6 +20,19 @@
 #include "Buzzer.h"
 #include "Notes.h"
 #include "PMOD_ENC.h"
+#include "PWM_Clock.h"
+#include "Timer_0A_Interrupt.h"
+#include "PWM0_0.h"
+
+#define SERVO_MIN_DUTY  0
+#define SERVO_MAX_DUTY  7000
+#define SERVO_STEP_SIZE 1
+
+void Timer_0A_Periodic_Task(void);
+
+static uint32_t Timer_0A_ms_elapsed = 0;
+static uint16_t servo_duty_cycle = SERVO_MIN_DUTY;
+static int servo_direction = 1;
 
 
 int main(void)
@@ -29,6 +42,10 @@ int main(void)
 	LaunchPad_Buttons_Init();
 	Buzzer_Init(); // PC4
 	PMOD_ENC_Init();
+	PWM_Clock_Init();                    // Must be before PWM0_0_Init
+	PWM0_0_Init(15625, SERVO_MIN_DUTY);  // 20ms period at 781.25kHz (from /64 clock)
+	Timer_0A_Interrupt_Init(&Timer_0A_Periodic_Task); // Start servo control
+
 	/*
 		A = PD0, B = PD1, BTN = PD2, SWT = PD3, 5th pin = GND, 6th pin = Vcc
 	*/
@@ -62,7 +79,30 @@ int main(void)
           }
         }
 
-      SysTick_Delay1ms(100);  // debounce
+      SysTick_Delay1ms(100);
 		
 	}
+}
+
+void Timer_0A_Periodic_Task(void)
+{
+    Timer_0A_ms_elapsed++;
+
+    if ((Timer_0A_ms_elapsed % 1) == 0)
+    {
+        servo_duty_cycle += (servo_direction * SERVO_STEP_SIZE);
+
+        if (servo_duty_cycle >= SERVO_MAX_DUTY)
+        {
+            servo_duty_cycle = SERVO_MAX_DUTY;
+            servo_direction = -1;
+        }
+        else if (servo_duty_cycle <= SERVO_MIN_DUTY)
+        {
+            servo_duty_cycle = SERVO_MIN_DUTY;
+            servo_direction = 1;
+        }
+
+        PWM0_0_Update_Duty_Cycle(servo_duty_cycle);
+    }
 }
