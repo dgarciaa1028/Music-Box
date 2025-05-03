@@ -25,10 +25,10 @@
  * than the period_constant.
  *
  * @param period_constant The period constant for the PWM signal that determines the
- *                        PWM signal's frequency.
+ *        PWM signal's frequency.
  *
  * @param duty_cycle The duty cycle, as a percentage of period_constant, for the PWM signal.
- *                   This value controls pulse width of the PWM signal.
+ *        This value controls pulse width of the PWM signal.
  *
  * @return None
  */

@@ -18,17 +18,26 @@
  
 void PWM0_0_Init(uint16_t period_constant, uint16_t duty_cycle)
 {
-    if (duty_cycle >= period_constant) return;
+    if (duty_cycle >= period_constant)
+			return;
+		
     SYSCTL->RCGCPWM |= 0x01;
+		
     SYSCTL->RCGCGPIO |= 0x02;
+		
     GPIOB->AFSEL |= 0x40;
+		
     GPIOB->PCTL &= ~0x0F000000;
     GPIOB->PCTL |= 0x04000000;
+		
     GPIOB->DEN |= 0x40;
+		
     PWM0->_0_CTL &= ~0x01;
     PWM0->_0_CTL &= ~0x02;
+		
     PWM0->_0_GENA |= 0xC0;
     PWM0->_0_GENA |= 0x08;
+		
     PWM0->_0_LOAD = (period_constant - 1);
     PWM0->_0_CMPA = (duty_cycle - 1);
     PWM0->_0_CTL |= 0x01;

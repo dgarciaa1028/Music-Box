@@ -1,22 +1,26 @@
 /**
  * @file Notes.c
  *
- * @brief Source file for the notes.
+ * @brief Source file for the notes definitions and song and duration arrays.
  *
- * This file contains the notes definitions for frequency along with the note and duration arrays
+ * This file contains the notes definitions for frequency along with the note and duration arrays. It also 
+ * contains a Play_Song function that plays the corresponding song using a note and duration array as inputs.
  *
- * @NOTE Tetris and Harry Potter notes and duration array is credited to hibit-dev on GitHub
+ * @NOTE Tetris, Harry Potter, and Pirates notes and duration array is credited to hibit-dev on GitHub
  * Link to their Repository: https://github.com/hibit-dev/buzzer/tree/master/src
  *
- * @author Daniel Garcia
+ * @author Daniel Garcia Aguilar, Robert Rabenkogo Eboulia
  */
  
 #include "Notes.h"
 #include "SysTick_Delay.h"
 #include "Buzzer.h"
-#include "PMOD_ENC.h"
+#include "PMOD_BTN.h"
 
-// Using float for space
+// BTN 1 and 3 are pressed together
+uint8_t PAUSE = 0x28;
+
+// constant float definitions for different notes and their associated frequencies
 const float C2  = 65.41f;
 const float Cs2 = 69.30f;
 const float D2  = 73.42f;
@@ -95,7 +99,6 @@ const float A7  = 3520.0f;
 const float Bb7 = 3729.3f;
 const float B7  = 3951.1f;
 
-
 // Tetris Theme
 const float tetris_notes[] = {
     E5, B4, C5, D5, C5, B4,
@@ -128,7 +131,6 @@ const float tetris_notes[] = {
     Gs5
 };
 
-// 1 = whole note, 2 = half note, 4 = quarter notes, 8 = eighth notes.
 const int tetris_dur[] = {
     4, 8, 8, 4, 8, 8,
     4, 8, 8, 4, 8, 8,
@@ -166,16 +168,15 @@ void Play_Tetris(void)
 {
     for (int i = 0; i < length_tetris; i++)
     {
-				// Check if the button is being pressed
-        if (PMOD_ENC_Button_Read(PMOD_ENC_Get_State()) == PMOD_ENC_BUTTON_MASK)
-        {
-            Buzzer_Output(BUZZER_OFF);  // Stop buzzer
-            break;
-        }
-				
-        int duration_ms = WHOLE_NOTE_DURATION / tetris_dur[i];
-        Play_Note(tetris_notes[i], duration_ms);
-        SysTick_Delay1ms(duration_ms * 0.03);
+			if (PAUSE == PMOD_BTN_Read()) // Stop playing if BTN 1 and 3 are pressed together
+			{
+				Buzzer_Output(BUZZER_OFF);
+				SysTick_Delay1ms(500); // Breif Delay to avoid unintended song playing
+				break;
+			}
+        int duration_ms = WHOLE_NOTE_DURATION / tetris_dur[i]; // calculates real note duration
+        Play_Note(tetris_notes[i], duration_ms); // plays notes based of notes array and calculated duration
+        SysTick_Delay1ms(duration_ms * 0.03); // Small delay to avoid slurring notes. Each note is distinct.
     }
 }
 
@@ -263,13 +264,12 @@ void Play_HarryPotter(void)
 {
     for (int i = 0; i < length_harryp; i++)
     {
-				// Check if the button is being pressed
-        if (PMOD_ENC_Button_Read(PMOD_ENC_Get_State()) == PMOD_ENC_BUTTON_MASK)
-        {
-            Buzzer_Output(BUZZER_OFF);  // Stop buzzer
-            break;
-        }
-				
+				if (PAUSE == PMOD_BTN_Read())
+				{
+					Buzzer_Output(BUZZER_OFF);
+					SysTick_Delay1ms(500);
+					break;
+				}
         int duration_ms = WHOLE_NOTE_DURATION / harryp_dur[i];
         Play_Note(harryp_notes[i], duration_ms);
         SysTick_Delay1ms(duration_ms * 0.03);
@@ -389,14 +389,13 @@ const int length_pirates = sizeof(pirates_notes) / sizeof(pirates_notes[0]);
 void Play_Pirates(void)
 {
     for (int i = 0; i < length_pirates; i++)
-    {				
-				// Check if the button is being pressed
-        if (PMOD_ENC_Button_Read(PMOD_ENC_Get_State()) == PMOD_ENC_BUTTON_MASK)
-        {
-            Buzzer_Output(BUZZER_OFF);  // Stop buzzer
-            break;
-        }
-				
+    {			
+				if (PAUSE == PMOD_BTN_Read())
+				{
+					Buzzer_Output(BUZZER_OFF);
+					SysTick_Delay1ms(500);
+					break;
+				}
         int duration_ms = WHOLE_NOTE_DURATION / pirates_dur[i];
         Play_Note(pirates_notes[i], duration_ms);
         SysTick_Delay1ms(duration_ms * 0.03);
@@ -404,64 +403,72 @@ void Play_Pirates(void)
 }
 
 
-int panther_notes[] = {
-  REST, REST, REST, Eb4, 
-  E4, REST, Fs4, G4, REST, Eb4,
-  E4, Fs4, G4, C5, B4, E4, G4, B4,   
-  Bb4, A4, G4, E4, D4, 
-  E4, REST, REST, Eb4,
-
-  E4, REST, Fs4, G4, REST,Eb4,
-  E4, Fs4, G4, C5, B4, G4, B4, E5,
-  Eb5,   
-  D5, REST, REST, Eb4, 
-  E4, REST, Fs4, G4, REST, Eb4,
-  E4, Fs4, G4, C5, B4, E4, G4, B4,   
-
-  Bb4, A4, G4, E4, D4, 
-  E4, REST,
-  REST, E5, D5, B4, A4, G4, E4,
-  Bb4, A4, Bb4, A4, Bb4, A4, Bb4, A4,   
-  G4, E4, D4, E4, E4, E4
+const float mario_notes[] = {
+    E7, E7, REST, E7,
+    REST, C7, E7, REST,
+    G7, REST, REST, REST,
+    G6, REST, REST, REST,
+    
+    C7, REST, REST, G6,
+    REST, REST, E6, REST,
+    REST, A6, REST, B6,
+    REST, Bb6, A6, REST,
+    
+    G6, E7, G7,
+    A7, F7, G7,
+    E7, C7, D7, B6,
+    
+    REST, REST, C7, REST, REST, G6,
+    REST, REST, E6, REST, REST, A6,
+    REST, B6, REST, Bb6, A6,
+    
+    G6, E7, G7,
+    A7, F7, G7,
+    E7, C7, D7, B6,
+    
+    REST, REST
 };
 
-int panther_dur[] = {
-  2, 4, 8, 8, 
-  4, 8, 8, 4, 8, 8,
-  8, 8, 8, 8, 8, 8, 8, 8,   
-  2, 16, 16, 16, 16, 
-  2, 4, 8, 4,
-
-  4, 8, 8, 4, 8, 8,
-  8, 8, 8, 8, 8, 8, 8, 8,
-  1,   
-  2, 4, 8, 8, 
-  4, 8, 8, 4, 8, 8,
-  8, 8, 8, 8, 8, 8, 8, 8,   
-
-  2, 16, 16, 16, 16, 
-  4, 4,
-  4, 8, 8, 8, 8, 8, 8,
-  16, 8, 16, 8, 16, 8, 16, 8,   
-  16, 16, 16, 16, 16, 2
+const int mario_dur[] = {
+    12, 12, 12, 12,
+    12, 12, 12, 12,
+    12, 12, 12, 12,
+    12, 12, 12, 12,
+    
+    12, 12, 12, 12,
+    12, 12, 12, 12,
+    12, 12, 12, 12,
+    12, 12, 12, 12,
+    
+    9, 9, 9,
+    12, 12, 12,
+    12, 12, 12, 12,
+    
+    12, 12, 12, 12, 12, 12,
+    12, 12, 12, 12, 12, 12,
+    12, 12, 12, 12, 12,
+    
+    9, 9, 9,
+    12, 12, 12,
+    12, 12, 12, 12,
+    
+    12, 12
 };
 
-const int length_panther = sizeof(panther_notes) / sizeof(panther_notes[0]);
+const int length_mario = sizeof(mario_notes) / sizeof(mario_notes[0]);
 
-void Play_PinkPanther(void)
+void Play_mario(void)
 {
-    for (int i = 0; i < length_panther; i++)
+    for (int i = 0; i < length_mario; i++)
     {				
-				// Check if the button is being pressed
-        if (PMOD_ENC_Button_Read(PMOD_ENC_Get_State()) == PMOD_ENC_BUTTON_MASK)
-        {
-            Buzzer_Output(BUZZER_OFF);  // Stop buzzer
-            break;
-        }
-				
-        int duration_ms = WHOLE_NOTE_DURATION / panther_dur[i];
-        Play_Note(panther_notes[i], duration_ms);
-        SysTick_Delay1ms(duration_ms * 0.03);
+				if (PAUSE == PMOD_BTN_Read())
+				{
+					Buzzer_Output(BUZZER_OFF);
+					SysTick_Delay1ms(500);
+					break;
+				}
+        int duration_ms = WHOLE_NOTE_DURATION / mario_dur[i];
+        Play_Note(mario_notes[i], duration_ms);
+        SysTick_Delay1ms(duration_ms * 0.30);
     }
 }
-

@@ -1,17 +1,19 @@
 /**
  * @file main.c
  *
- * @brief Main source code for the Sound Generation program.
+ * @brief main program for a button driven music box. We can select between 4 tunes, each
+ * assotiated with a different button on the PMOD button module. An ISR is set up using 
+ * Timer 0A in order to sweep the servo as music is playing. The PMOD buttons use polling
+ * to know when a button is pushed, while the servo motor uses Timers to execute an ISR 
+ * concurrently with the while loop in the main function. 
  *
- * This file contains the main entry point and function definitions for the Sound Generation program.
- * It interfaces with the following:
- *	- Tiva LaunchPad Push Buttons (SW0 - SW1)
- *	- DMT-1206 Magnetic Buzzer
+ * Each PMOD-BTN press immediately starts its associated tune.
+ * A single 1 kHz Timer0A ISR handles the servo sweep.
+ * PMOD BTN Pinout: BTN0(PA2), BTN1(PA3), BTN2(PA4), BTN3(PA5), PIN5(GND) PIN6(VCC)
+ * Buzzer Output: PC4
+ * Servo Motor Output: PB6
  *
- * To verify the pinout of the user LED, refer to the Tiva C Series TM4C123G LaunchPad User's Guide
- * Link: https://www.ti.com/lit/pdf/spmu296
- *
- * @author Daniel Garcia
+ * @author Daniel Garcia Aguilar, Robert Rabenkogo Eboulia
  */
 
 #include "TM4C123GH6PM.h"
@@ -19,90 +21,103 @@
 #include "GPIO.h"
 #include "Buzzer.h"
 #include "Notes.h"
-#include "PMOD_ENC.h"
+#include "PMOD_BTN.h"
 #include "PWM_Clock.h"
 #include "Timer_0A_Interrupt.h"
 #include "PWM0_0.h"
 
-#define SERVO_MIN_DUTY  0
-#define SERVO_MAX_DUTY  7000
-#define SERVO_STEP_SIZE 1
+// Servo sweep parameters
+#define SERVO_MIN_DUTY 0
+#define SERVO_MAX_DUTY 5000 // restrict sweep so that it faces the front most of the time
+#define SERVO_STEP_SIZE 1 // increases duty cycle by this value in order to make the sweep 'slow'
 
+// globals for servo control
+static uint16_t servo_duty = SERVO_MIN_DUTY; // Initial duty cycle
+static int servo_dir = 1; // tracks which direction motor is sweeping, 1 will increase, and -1 will decrese duty cycle
+static uint32_t ms_elapsed = 0; // For Timer use
+
+// forward declarations
 void Timer_0A_Periodic_Task(void);
-
-static uint32_t Timer_0A_ms_elapsed = 0;
-static uint16_t servo_duty_cycle = SERVO_MIN_DUTY;
-static int servo_direction = 1;
-
 
 int main(void)
 {
-	// Initialize hardware
-	SysTick_Delay_Init();
-	LaunchPad_Buttons_Init();
-	Buzzer_Init(); // PC4
-	PMOD_ENC_Init();
-	PWM_Clock_Init();                    // Must be before PWM0_0_Init
-	PWM0_0_Init(15625, SERVO_MIN_DUTY);  // 20ms period at 781.25kHz (from /64 clock)
-	Timer_0A_Interrupt_Init(&Timer_0A_Periodic_Task); // Start servo control
+  SysTick_Delay_Init(); // for all delays
+  LaunchPad_Buttons_Init(); // For debugging
+  Buzzer_Init(); // PC4 buzzer output
+	PMOD_BTN_Init(); // PA2-PA5 button input
 
-	/*
-		A = PD0, B = PD1, BTN = PD2, SWT = PD3, 5th pin = GND, 6th pin = Vcc
-	*/
+  PWM_Clock_Init();
 	
-	uint8_t last_state = PMOD_ENC_Get_State();
-  int current_song_index = 0;
-  int last_song_index = -1;
-  const int num_songs = 4; // Change this when you add another song
+	// The period constant for the PWM signal that determines the PWM signal's frequency,
+	// Duty Cycle as a percentage of the period constant
+  PWM0_0_Init(15625, SERVO_MIN_DUTY); // 20 ms period, 0%
 
-	while (1)
-	{
-		uint8_t state = PMOD_ENC_Get_State();
-    int direction = PMOD_ENC_Get_Rotation(state, last_state);
-    last_state = state;
+  Timer_0A_Interrupt_Init(&Timer_0A_Periodic_Task);   // ISR for servo sweeping
 
-    if (direction == 1)
-			current_song_index = (current_song_index + 1) % num_songs;
-    else if (direction == -1)
-       current_song_index = (current_song_index - 1 + num_songs) % num_songs;
-
-     if (current_song_index != last_song_index)
-			 {
-					last_song_index = current_song_index;
-
-          switch (current_song_index)
-          {
-            case 0: Play_Tetris(); break; // starts immediately playing tetris when resetn 
-            case 1: Play_HarryPotter(); break;
-            case 2: Play_Pirates(); break;
-						case 3: Play_PinkPanther(); break; // to add another song, keep same format
-          }
-        }
-
-      SysTick_Delay1ms(100);
+  while (1)
+  {
+    uint8_t btn_state = PMOD_BTN_Read(); // initialize variable for button read
 		
-	}
+		// dispatch to the appropriate tune
+		switch (btn_state)
+		{
+			// BTN0 (PA2)
+			case 0x04:  
+			{
+				Play_Tetris();     
+				break;
+			}
+			// BTN1 (PA3)
+			case 0x08:  
+			{
+				Play_HarryPotter();
+				break;
+			}
+			// BTN 2 (PA4)
+			case 0x10:  
+			{
+				Play_Pirates(); 
+				break;  // PA4
+			}
+			// BTN 3 (PA5)
+			case 0x20:  
+			{
+				Play_mario();    
+				break;  // PA5
+			}
+			// No button is pressed
+			default:
+			{
+				break;
+			}
+		}
+		SysTick_Delay1ms(500);
+  }
 }
 
+
+// Timer0A ISR: slowly sweep the servo during main
 void Timer_0A_Periodic_Task(void)
 {
-    Timer_0A_ms_elapsed++;
+  ms_elapsed++; // counter
 
-    if ((Timer_0A_ms_elapsed % 1) == 0)
-    {
-        servo_duty_cycle += (servo_direction * SERVO_STEP_SIZE);
-
-        if (servo_duty_cycle >= SERVO_MAX_DUTY)
-        {
-            servo_duty_cycle = SERVO_MAX_DUTY;
-            servo_direction = -1;
-        }
-        else if (servo_duty_cycle <= SERVO_MIN_DUTY)
-        {
-            servo_duty_cycle = SERVO_MIN_DUTY;
-            servo_direction = 1;
-        }
-
-        PWM0_0_Update_Duty_Cycle(servo_duty_cycle);
-    }
+  // every tick, move the servo one step back/forth depending on servo_dir
+	// for -1, will subtract a step untill duty cycle = 0,
+	// for 1, will add a step until duty cycle = 5000
+  servo_duty += servo_dir * SERVO_STEP_SIZE;
+	
+	// Once servo_duty reached 5000, will set direction to -1
+  if (servo_duty >= SERVO_MAX_DUTY)
+	{
+		servo_duty = SERVO_MAX_DUTY;
+		servo_dir = -1; 
+	}
+	// Once servo_duty reached 0, will set direction to 1
+  else if (servo_duty <= SERVO_MIN_DUTY)
+	{
+		servo_duty = SERVO_MIN_DUTY;
+		servo_dir = 1;
+	}
+	
+  PWM0_0_Update_Duty_Cycle(servo_duty); // Updates duty cycle for smooth, slow sweep
 }

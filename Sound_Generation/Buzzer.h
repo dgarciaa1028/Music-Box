@@ -10,7 +10,7 @@
  * To verify the pinout of the user LED, refer to the Tiva C Series TM4C123G LaunchPad User's Guide
  * Link: https://www.ti.com/lit/pdf/spmu296
  *
- * @author Daniel Garcia
+ * @author Daniel Garcia Aguilar, Robert Rabenkogo Eboulia, Aaron Nanas
  */
  
 #include "TM4C123GH6PM.h"
@@ -23,9 +23,9 @@ extern const uint8_t BUZZER_ON;
 
 
 /**
- * @brief Initializes the DMT-1206 Magnetic Buzzer on the EduBase board.
+ * @brief Initializes the Piezo Magnetic Buzzer.
  *
- * This function configures the PC4 pin used by the DMT-1206 Magnetic Buzzer.
+ * This function configures the PC4 pin used by the Piezo Magnetic Buzzer.
  * It enables the clock to Port C, sets PC4 as an output GPIO pin, configures PC4 to function as a GPIO pin,
  * and enables digital functionality for PC4.
  *
@@ -36,7 +36,7 @@ extern const uint8_t BUZZER_ON;
 void Buzzer_Init(void);
 
 /**
- * @brief Sets the output of the DMT-1206 Magnetic Buzzer.
+ * @brief Sets the output of the Piezo Magnetic Buzzer.
  *
  * This function sets the output of the buzzer based on the value of the input, buzzer_value.
  * A bitwise AND operation (& 0xEF) is performed to mask Bit 4 of the GPIOC's DATA register
@@ -52,7 +52,7 @@ void Buzzer_Init(void);
 void Buzzer_Output(uint8_t value);
 
 /**
- * @brief Plays a note with the DMT-1206 Magnetic Buzzer.
+ * @brief Plays a note with the Piezo Magnetic Buzzer.
  *
  * This function generates a square wave with the DMT-1206 Magnetic Buzzer to produce a note of the specified frequency and duration.
  * It calculates the period of the note in microseconds, divides it by two to get half period, and then toggles the

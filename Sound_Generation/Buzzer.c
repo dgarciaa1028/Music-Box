@@ -5,12 +5,12 @@
  *
  * This file contains the function definitions for the Buzzer driver.
  * It interfaces with the following:
- *	- DMT-1206 Magnetic Buzzer
+ *	- Piezo Magnetic Buzzer
  *
  * To verify the pinout of the user LED, refer to the Tiva C Series TM4C123G LaunchPad User's Guide
  * Link: https://www.ti.com/lit/pdf/spmu296
  *
- * @author Daniel Garcia Aguilar
+ * @author Daniel Garcia Aguilar, Robert Rabenkogo Eboulia, Aaron Nanas
  */
 
 #include "Buzzer.h"
@@ -67,7 +67,7 @@ void Play_Note(float note, int duration)
 	int cycles = total_us / period_us;
 
 	// Generate a square wave for the specified cycles
-	for (unsigned int i = 0; i < cycles; i++)
+	for (int i = 0; i < cycles; i++)
 	{
 		Buzzer_Output(BUZZER_ON);
 		SysTick_Delay1us(half_period_us);

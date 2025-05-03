@@ -12,7 +12,7 @@
  * To verify the pinout of the user LED, refer to the Tiva C Series TM4C123G LaunchPad User's Guide
  * Link: https://www.ti.com/lit/pdf/spmu296
  *
- * @author Daniel Garcia
+ * @author Daniel Garcia Aguilar, Robert Rabenkogo Eboulia
  */
 
 #include "TM4C123GH6PM.h"
